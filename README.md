@@ -27,8 +27,10 @@ After you make sure you have the latest Arduino IDE (the app), the CPX board ins
 Then, simply open it in Arduino. **Do your final check as stated below:**
 
 **BOARD**: On a Mac (sorry windows friends idk how y'all do it), go to the Tools menu on the menu bar and go to Board. Make sure you have "Adafruit Circuit Playground Express" selected. If you can't find it, it's under the AVR boards submenu. If you still can't find it, go to Board Manager and search "AVR Board". Then install the latest version.
+![alt text](https://github.com/regularegg/bair/blob/main/README%20illustrations/dependency.png)
 
 **PORT**: Open the sub menu and select the option that has the words "Adafruit Circuit Playground" in it. If you can't find that port, try unplugging your board and plugging it back in or using a different USB port.
+![alt text](https://github.com/regularegg/bair/blob/main/README%20illustrations/finalcheck.png)
 
 Then press the little -> right arrow button on the top to send it to your CPX. After it's done uploading, your CPX should be dark except for the little green light in the bottom.
 
