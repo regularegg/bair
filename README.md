@@ -43,3 +43,5 @@ Then you should be able to see a series of numbers (usually around 50) that rise
 ## Troubleshooting
 
 If it doesn't work, check to see if you have all the libraries I've listed. Otherwise, HMU.
+
+Worst case, you can go to Library > Arduino15 and delete the whole Arduino15 folder. Then restart Arduino and it should generate a fresh one. Now you can reinstall all those fun libraries!
