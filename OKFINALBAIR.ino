@@ -5,18 +5,21 @@
 #define LED_PIN 6
 #define LED_COUNT 30
 
+#define PIR_PIN 5
+
 //declare neopixel values
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
-float value; 
+float value, pinVal; 
 float multiplier = 12;
 
 void setup() {
   Serial.begin(9600);
   CircuitPlayground.begin();
+  pinMode(PIR_PIN, INPUT);
   
   strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
   strip.show();            // Turn OFF all pixels ASAP
-  strip.setBrightness(50); // Set BRIGHTNESS to about 1/5 (max = 255)
+  strip.setBrightness(30); // Set BRIGHTNESS to about 1/5 (max = 255)
 }
 
 void loop() {
@@ -24,7 +27,7 @@ void loop() {
   
   //loud sound is defined as 500.00 ambient = 100.00
   value = CircuitPlayground.mic.soundPressureLevel(10);
-  
+  pinVal = digitalRead(PIR_PIN);
   //Serial.print("Sound Sensor SPL: ");
   //Serial.println(value);
 
@@ -76,7 +79,11 @@ void colorWipe(float val, int wait) {
     float tempVal = valMap(val);
     //strip.setPixelColor(i, strip.Color(sameVal, sameVal, sameVal));   
 
-
+    if(pinVal == 1){
+      strip.setBrightness(100);
+    }else{
+      strip.setBrightness(30);
+    }
     strip.show();                          //  Update strip to match
     delay(wait);                           //  Pause for a moment
   }

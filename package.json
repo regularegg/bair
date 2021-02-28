@@ -1,0 +1,27 @@
+{
+  "name": "okfinalbair",
+  "version": "1.0.0",
+  "description": "Bair on the web",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/regularegg/bair.git"
+  },
+  "keywords": [
+    "sockets",
+    "node",
+    "bair"
+  ],
+  "author": "gabe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/regularegg/bair/issues"
+  },
+  "homepage": "https://github.com/regularegg/bair#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
