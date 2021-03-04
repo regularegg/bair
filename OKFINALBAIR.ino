@@ -1,16 +1,26 @@
+#include <FastLED.h>
+
 #include <Adafruit_NeoPixel.h>
 #include <Adafruit_CircuitPlayground.h>
+#include <math.h>
 
 //def LED values
-#define LED_PIN 6
+#define LED_PIN 2
 #define LED_COUNT 30
 
-#define PIR_PIN 5
-
+#define PIR_PIN 6
 //declare neopixel values
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 float value, pinVal; 
 float multiplier = 12;
+float movementMultiplier = 30;
+
+int LED_X = 5;
+int LED_Y = 6;
+
+int refreshRate = 1;
+
+float timeStart, timeEnd;
 
 void setup() {
   Serial.begin(9600);
@@ -26,18 +36,24 @@ void loop() {
   // Take 10 milliseconds of sound data to calculate
   
   //loud sound is defined as 500.00 ambient = 100.00
-  value = CircuitPlayground.mic.soundPressureLevel(10);
+  value = CircuitPlayground.mic.soundPressureLevel(100);
   pinVal = digitalRead(PIR_PIN);
-  //Serial.print("Sound Sensor SPL: ");
-  //Serial.println(value);
+  movementFade(pinVal);
 
-  delay(90);
-
-  colorWipe(value, 10);
+ colorTransform(value, movementMultiplier, refreshRate);
 }
 
-void displaySound(){
-  
+
+void movementFade(float pin){
+  if(movementMultiplier > 0 && pin == 0){
+    movementMultiplier -= 0.5;
+  }else if(movementMultiplier < 150 && pin == 1){
+    movementMultiplier += 5;
+    //protect against burnout
+    if(movementMultiplier > 150.0){
+      movementMultiplier = 150;
+    }
+  }
 }
 
 float valTransformOne(float val){
@@ -53,38 +69,50 @@ float valTransformTwo(float val, float mult){
 
 float valMap(float val){
   float t_val = map(multiplier*(val-50), 0, 800, 30, 255);
-  Serial.print(t_val);
-  Serial.print("\n");
   return t_val;
 }
-
-void colorWipe(float val, int wait) {
-
-  //color(255, 228, 171) <- soft orange yellow
+void colorTransform(float val, float movement, int wait){
+   //color(255, 228, 171) <- soft orange yellow
   //color(255, 243, 23) <- bright yellow
   //color(255, 127, 23) <- fire orange
-  float sameVal = valMap(val);
 
-  for(int i=0; i<strip.numPixels(); i++) { // For each pixel in strip...
-    //generic red morph
-    strip.setPixelColor(i, strip.Color(val,i,i));         //  Set pixel's color (in RAM)
+  //color(145, 185, 222) <-- bair blu
+  //color(135, 48, 222) <--- bair purple
+  //color(222,222,222) <--bair white
+  
+  for( int i = 0; i<LED_X; i++){
+    float rowMil = millis() + i;
+    for(int j = 0; j < LED_Y; j++){
+      float noise = inoise8(0.1f*millis()*i*j)/500.01;
+      float cosOutput = cos(rowMil);
+      float r, g, b;
+      /*
+      if(cosOutput > 0){
+        r = map(10*abs(cosOutput),0, 10, 135, 145);
+        g = map(10*abs(cosOutput),0, 10, 48, 185);
+        b = 222+noise;
+      }else{
+         r = map(10*abs(cosOutput),0, 10, 145, 222);
+        g = map(10*abs(cosOutput),0, 10, 185, 222);
+        b = 222+noise;
+      }*/
+     //r = map(10*cosOutput, -10, 10, 135, 145);
+     //g = map(10*cosOutput, -10, 10, 48, 185);
+     //b = 222-cosOutput;
 
-    //Orange surprise
-    strip.setPixelColor(i, strip.Color(255,valTransformTwo(val, i),23));         //  Set pixel's color (in RAM)
+    
+    r = map(10*cos(rowMil*(100-val))+noise, -10, 10, 135, 222);
+    g = map(10*cos(rowMil*(100-val))+noise, -10, 10, 48, 222)+ random(0,val-40);
+    b = 222-(10*cos(rowMil*(100-val)));
 
-    //Red to yellow
-    //strip.setPixelColor(i, strip.Color(255,i,i));         //  Set pixel's color (in RAM)
-
-    //All the same
-    float tempVal = valMap(val);
-    //strip.setPixelColor(i, strip.Color(sameVal, sameVal, sameVal));   
-
-    if(pinVal == 1){
-      strip.setBrightness(100);
-    }else{
-      strip.setBrightness(30);
-    }
+    strip.setPixelColor((i*LED_Y) + j, strip.Color(r,g,b));
+    //strip.setBrightness(inoise8(0.1f*millis()*j)-100);
+      Serial.print(movement);
+      Serial.print("\n");
+      strip.setBrightness(movement);
     strip.show();                          //  Update strip to match
-    delay(wait);                           //  Pause for a moment
+    delay(wait);   
+    }
   }
+
 }
