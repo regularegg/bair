@@ -45,7 +45,7 @@ void loop() {
 
 
 void movementFade(float pin){
-  if(movementMultiplier > 0 && pin == 0){
+  if(movementMultiplier > 25 && pin == 0){
     movementMultiplier -= 0.5;
   }else if(movementMultiplier < 150 && pin == 1){
     movementMultiplier += 5;
@@ -81,7 +81,7 @@ void colorTransform(float val, float movement, int wait){
   //color(222,222,222) <--bair white
   
   for( int i = 0; i<LED_X; i++){
-    float rowMil = millis() + i;
+    float rowMil = millis() + i/10;
     for(int j = 0; j < LED_Y; j++){
       float noise = inoise8(0.1f*millis()*i*j)/500.01;
       float cosOutput = cos(rowMil);
@@ -101,18 +101,18 @@ void colorTransform(float val, float movement, int wait){
      //b = 222-cosOutput;
 
     
-    r = map(10*cos(rowMil*(100-val))+noise, -10, 10, 135, 222);
-    g = map(10*cos(rowMil*(100-val))+noise, -10, 10, 48, 222)+ random(0,val-40);
-    b = 222-(10*cos(rowMil*(100-val)));
+     r = map(10*cos(rowMil*(100-val))+noise, -10, 10, 135, 222);
+     g = map(10*cos(rowMil*(100-val))+noise, -10, 10, 48, 222)+ random(0,val-40);
+     b = 222-(10*cos(rowMil*(100-val)));
 
-    strip.setPixelColor((i*LED_Y) + j, strip.Color(r,g,b));
-    //strip.setBrightness(inoise8(0.1f*millis()*j)-100);
-      Serial.print(movement);
-      Serial.print("\n");
-      strip.setBrightness(movement);
-    strip.show();                          //  Update strip to match
-    delay(wait);   
+     strip.setPixelColor((i*LED_Y) + j, strip.Color(r,g,b));
+     //strip.setBrightness(inoise8(0.1f*millis()*j)-100);
+       Serial.print(movement);
+        Serial.print("\n"); 
     }
   }
-
+//moved the strip.show to update every row to prevent weird lagging and hopefully make the whole thing faster?
+    strip.setBrightness(movement);
+    strip.show();                          //  Update strip to match
+    delay(wait);  
 }
